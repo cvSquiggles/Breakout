@@ -1,0 +1,46 @@
+.container {
+    width: 1200px;
+    height: 800px;
+    border: solid 1px black;
+    place-self:center;
+    place-content:center;
+    background-color: black;
+}
+
+.grid {
+    width: 1200px;
+    height: 800px;
+    border: solid 1px black;
+    position:absolute;
+    background-color: black;
+}
+
+#score {
+    place-self:center;
+    margin-bottom: 0px;
+}
+
+body{
+    display:grid;
+    align-items: center;
+}
+
+.user{
+    position: absolute;
+    width: 100px;
+    height: 20px;
+    background-color: white;
+}
+
+.ball{
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: white;
+}
+
+.block{
+    position: absolute;
+    width: 100px;
+    height: 20px;
+}
