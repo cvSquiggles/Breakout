@@ -13,7 +13,7 @@ let ballCurrentPosition = ballStart
 
 const colorOptions = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet']
 
-//Blocks
+//blocks
 class Block {
     constructor(xAxis, yAxis){
         this.bottomLeft = [xAxis, yAxis]
@@ -26,57 +26,124 @@ class Block {
 
 //add blocks
 const blocks = [
-    new Block (10, 95),
-    new Block (20, 95),
-    new Block (30, 95),
-    new Block (40, 95),
-    new Block (50, 95),
-    new Block (60, 95),
-    new Block (70, 95),
-    new Block (80, 95),
-    new Block (90, 95)
+    //row one
+    new Block (1.5, 95),
+    new Block (11.5, 95),
+    new Block (21.5, 95),
+    new Block (31.5, 95),
+    new Block (41.5, 95),
+    new Block (51.5, 95),
+    new Block (61.5, 95),
+    new Block (71.5, 95),
+    new Block (81, 95),
+    new Block (90.5, 95),
+    //row two
+    new Block (1.5, 90),
+    new Block (11.5, 90),
+    new Block (21.5, 90),
+    new Block (31.5, 90),
+    new Block (41.5, 90),
+    new Block (51.5, 90),
+    new Block (61.5, 90),
+    new Block (71.5, 90),
+    new Block (81, 90),
+    new Block (90.5, 90),
+    //row three
+    new Block (1.5, 85),
+    new Block (11.5, 85),
+    new Block (21.5, 85),
+    new Block (31.5, 85),
+    new Block (41.5, 85),
+    new Block (51.5, 85),
+    new Block (61.5, 85),
+    new Block (71.5, 85),
+    new Block (81, 85),
+    new Block (90.5, 85),
+    //row four
+    new Block (1.5, 80),
+    new Block (11.5, 80),
+    new Block (21.5, 80),
+    new Block (31.5, 80),
+    new Block (41.5, 80),
+    new Block (51.5, 80),
+    new Block (61.5, 80),
+    new Block (71.5, 80),
+    new Block (81, 80),
+    new Block (90.5, 80),
+    //row five
+    new Block (1.5, 75),
+    new Block (11.5, 75),
+    new Block (21.5, 75),
+    new Block (31.5, 75),
+    new Block (41.5, 75),
+    new Block (51.5, 75),
+    new Block (61.5, 75),
+    new Block (71.5, 75),
+    new Block (81, 75),
+    new Block (90.5, 75),
+    //row six
+    new Block (1.5, 70),
+    new Block (11.5, 70),
+    new Block (21.5, 70),
+    new Block (31.5, 70),
+    new Block (41.5, 70),
+    new Block (51.5, 70),
+    new Block (61.5, 70),
+    new Block (71.5, 70),
+    new Block (81, 70),
+    new Block (90.5, 70),
+    //row seven
+    new Block (1.5, 65),
+    new Block (11.5, 65),
+    new Block (21.5, 65),
+    new Block (31.5, 65),
+    new Block (41.5, 65),
+    new Block (51.5, 65),
+    new Block (61.5, 65),
+    new Block (71.5, 65),
+    new Block (81, 65),
+    new Block (90.5, 65),
 ]
 
-drawBlock()
+drawBlocks()
 
 //add user
 const user = document.createElement('div')
 user.classList.add('user')
 grid.appendChild(user)
-// Render user
+//render user
 drawUser()
 
 //add ball
 const ball = document.createElement('div')
 ball.classList.add('ball')
 grid.appendChild(ball)
-// Render ball
+//render ball
 drawBall()
 
 
-//Render a block at it's set location with a randomized color
-function drawBlock(){
+//render a block at it's set location with a randomized color
+function drawBlocks(){
     for(let i =0; i < blocks.length; i++){
         const block = document.createElement('div')
         block.classList.add('block')
-        block.style.left = block.xAxis
-        block.style.bottom = block.yAxis
+        block.style.left = blocks[i].bottomLeft[0] + '%'
+        block.style.bottom = blocks[i].bottomLeft[1] + '%'
         //scoreDisplay.textContent = colorOptions[Math.round((Math.random() * 5))] ~Debug line for troubleshooting
-        block.color = colorOptions[Math.round((Math.random() * 5))]
-        block.style.backgroundColor = block.color
-        block.style.backgroundColor = block.color
+        blocks[i].color = colorOptions[Math.round((Math.random() * 5))]
+        block.style.backgroundColor = blocks[i].color
         grid.appendChild(block)
     }
 }
 
 
-//Render user at location specified by the currentPosition array
+//render user at location specified by the currentPosition array
 function drawUser() {
     user.style.left = currentPosition[0] + '%'
     user.style.bottom = currentPosition[1] + '%'
 }
 
-//Render ball at location specified by the ballCurrentPosition array
+//render ball at location specified by the ballCurrentPosition array
 function drawBall() {
     ball.style.left = ballCurrentPosition[0] + '%'
     ball.style.bottom = ballCurrentPosition[1] + '%'
