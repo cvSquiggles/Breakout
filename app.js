@@ -1,7 +1,9 @@
 const grid = document.querySelector('.grid')
 const scoreDisplay = document.querySelector('#score')
-const blockWidth = 100
-const blockHeight = 20
+const blockWidth = 8
+const blockHeight = 2
+const ballWidth = 0.9
+const ballHeight = 1.3
 const boardWidth = 1100
 const boardHeight = 700
 var gameStarted = false
@@ -197,8 +199,34 @@ function moveBall() {
     ballCurrentPosition[1] += yDirection
     drawBall()
     }
+    //After moving, checkForCollision
+    checkForCollision()
 }
 timerID = setInterval(moveBall, 10)
+
+//check for collision
+function checkForCollision() {
+    //player collision
+    //#TODO, add player collision logic
+    //block collision
+    for (let i = 0; i < blocks.length; i++){
+        if(ballCurrentPosition[0] > blocks[i].bottomLeft[0] &&
+            ballCurrentPosition[0] < blocks[i].bottomRight[0] &&
+            (ballCurrentPosition[1] + ballHeight) > blocks[i].bottomLeft[1] &&
+            ballCurrentPosition[1] < blocks[i].topLeft[1]) {
+                //remove block and update score
+                const allBlocks = document.querySelectorAll('.block')
+                allBlocks[i].classList.remove('block')
+                blocks.splice(i, 1)
+                score++
+                scoreDisplay.innerHTML = score
+                if (blocks.length == 0) {
+                    gameStarted = false
+                    scoreDisplay.innerHTML = ('Final score: ' + score)
+                }
+            }
+    }
+}
 
 
 //Notes: Add pause on block hit for movement to give user time to input another color if needed; combo for hitting blocks with the right color

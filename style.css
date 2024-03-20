@@ -34,13 +34,13 @@ body{
 
 .ball{
     position: absolute;
-    width: 10px;
-    height: 10px;
+    width: 0.9%;
+    height: 1.3%;
     background-color: white;
 }
 
 .block{
     position: absolute;
-    width: 100px;
-    height: 20px;
+    width: 8%;
+    height: 2.5%;
 }
