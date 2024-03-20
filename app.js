@@ -3,7 +3,13 @@ const scoreDisplay = document.querySelector('#score')
 const blockWidth = 100
 const blockHeight = 20
 const boardWidth = 1100
-const boardHeight= 700
+const boardHeight = 700
+var gameStarted = false
+let xDirection = 0.1
+let yDirection = -0.1
+
+let timerID
+let score = 0
 
 const userStart = [49, 1]
 let currentPosition = userStart
@@ -105,6 +111,10 @@ const blocks = [
     new Block (90.5, 65),
 ]
 
+//Listen for player input
+document.addEventListener('keydown', moveUser)
+
+//add blocks
 drawBlocks()
 
 //add user
@@ -120,7 +130,6 @@ ball.classList.add('ball')
 grid.appendChild(ball)
 //render ball
 drawBall()
-
 
 //render a block at it's set location with a randomized color
 function drawBlocks(){
@@ -149,7 +158,47 @@ function drawBall() {
     ball.style.bottom = ballCurrentPosition[1] + '%'
 }
 
+//enable movement
+function moveUser(e) {
+    console.log(e.key)
+    if (gameStarted == false) {
+        if(e.key == 'Control'){
+            gameStarted = true
+        }
+        return
+    } else{
+    switch(e.key){
+        case 'ArrowLeft':
+            if (currentPosition[0] > 0){
+                currentPosition[0] -= 1
+                drawUser()
+            }
+            break
+        case 'ArrowRight':
+            if (currentPosition[0] < 91){
+                currentPosition[0] += 1
+                drawUser()
+            }
+            break
+        }
+    }
+}
 
+//move ball
+function moveBall() {
+    if (gameStarted == true) {
+    if (ballCurrentPosition[0] <= 0 || ballCurrentPosition[0] >= 99) {
+        xDirection = xDirection * -1
+    }
+    if (ballCurrentPosition[1] <= 0 || ballCurrentPosition[1] >= 99) {
+        yDirection = yDirection * -1
+    }
+    ballCurrentPosition[0] += xDirection
+    ballCurrentPosition[1] += yDirection
+    drawBall()
+    }
+}
+timerID = setInterval(moveBall, 10)
 
 
 //Notes: Add pause on block hit for movement to give user time to input another color if needed; combo for hitting blocks with the right color
