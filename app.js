@@ -1,16 +1,20 @@
 const grid = document.querySelector('.grid')
 const scoreDisplay = document.querySelector('#score')
 const blockWidth = 8
-const blockHeight = 2
+const blockHeight = 2.5
 const ballWidth = 0.9
 const ballHeight = 1.3
 const boardWidth = 1100
 const boardHeight = 700
 var gameStarted = false
+var keyHeld = 'None'
+var hitLock = false
+var keyHeldDuration = 0
 let xDirection = 0.1
 let yDirection = -0.1
 
 let timerID
+let timerID2
 let score = 0
 
 const userStart = [49, 1]
@@ -115,6 +119,7 @@ const blocks = [
 
 //Listen for player input
 document.addEventListener('keydown', moveUser)
+document.addEventListener('keyup', stopUser)
 
 //add blocks
 drawBlocks()
@@ -174,30 +179,81 @@ function moveUser(e) {
             if (currentPosition[0] > 0){
                 currentPosition[0] -= 1
                 drawUser()
+                keyHeld = 'ArrowLeft'
+                if (keyHeldDuration == 0) {
+                    keyHeldDuration = 0.1
+                }
+            } else if (currentPosition[0] < 0) {
+                currentPosition[0] = 0
             }
             break
         case 'ArrowRight':
-            if (currentPosition[0] < 91){
+            if (currentPosition[0] < 92){
                 currentPosition[0] += 1
                 drawUser()
+                keyHeld = 'ArrowRight'
+                if (keyHeldDuration == 0) {
+                    keyHeldDuration = 0.1
+                }
+            } else if (currentPosition[0] > 92) {
+                currentPosition[0] = 92
             }
             break
         }
     }
 }
+timerID2 = setInterval(playerVelocity, 600)
+//player velocity
+function playerVelocity(){
+    if (keyHeldDuration > 0 && keyHeldDuration < 0.4) {
+        keyHeldDuration += 0.1
+        scoreDisplay.innerHTML = keyHeldDuration.toString()
+    }
+    if (hitLock == true) {
+        hitLock = false
+    }
+}
+
+
+//momentum movement
+function stopUser(e) {
+    console.log(e.key)
+    keyHeld = 'None'
+    keyHeldDuration = 0
+}
 
 //move ball
 function moveBall() {
     if (gameStarted == true) {
-    if (ballCurrentPosition[0] <= 0 || ballCurrentPosition[0] >= 99) {
-        xDirection = xDirection * -1
-    }
-    if (ballCurrentPosition[1] <= 0 || ballCurrentPosition[1] >= 99) {
-        yDirection = yDirection * -1
-    }
-    ballCurrentPosition[0] += xDirection
-    ballCurrentPosition[1] += yDirection
-    drawBall()
+        if (xDirection >= 1) {
+            xDirection = 1
+        }
+        if (xDirection <= -1) {
+            xDirection = -1
+        }
+        if (yDirection >= 1) {
+            yDirection = 1
+        }
+        if (yDirection <= -1) {
+            yDirection = -1
+        }
+        //wall bounces
+        if (ballCurrentPosition[0] <= 0 || ballCurrentPosition[0] >= 99) {
+            xDirection = xDirection * -1
+        }
+        //ceiling bounce
+        if (ballCurrentPosition[1] >= 99) {
+            yDirection = yDirection * -1
+        }
+        //game over
+        if (ballCurrentPosition[1] <= 0) {
+            document.removeEventListener('keydown', moveUser)
+            scoreDisplay.innerHTML = 'You lose! Final score: ' + score.toString()
+            clearInterval(timerId)
+        }
+        ballCurrentPosition[0] += xDirection
+        ballCurrentPosition[1] += yDirection
+        drawBall()
     }
     //After moving, checkForCollision
     checkForCollision()
@@ -207,7 +263,44 @@ timerID = setInterval(moveBall, 10)
 //check for collision
 function checkForCollision() {
     //player collision
-    //#TODO, add player collision logic
+    if (ballCurrentPosition[0] >= currentPosition[0] &&
+        ballCurrentPosition[0] <= currentPosition[0] + blockWidth &&
+        (ballCurrentPosition[1]) >= currentPosition[1] &&
+         ballCurrentPosition[1] <= (currentPosition[1] + blockHeight) &&
+         hitLock == false){
+            switch(keyHeld){
+                case('ArrowLeft'):
+                    if (xDirection >= 0) {
+                        xDirection = xDirection * -1
+                        xDirection = xDirection - keyHeldDuration
+                        if (xDirection == 0) {
+                            xDirection = -0.1
+                        }
+                    } else {
+                        xDirection = xDirection + keyHeldDuration
+                        if (xDirection == 0) {
+                            xDirection = 0.1
+                        }
+                    }
+                    break
+                    case('ArrowRight'):
+                    if (xDirection < 0) {
+                        xDirection = xDirection * -1
+                        xDirection = xDirection - keyHeldDuration
+                        if (xDirection == 0) {
+                            xDirection = -0.1
+                        }
+                    } else {
+                        xDirection = xDirection + keyHeldDuration
+                        if (xDirection == 0) {
+                            xDirection = 0.1
+                        }
+                    }
+                    break
+            }
+            yDirection = yDirection * -1
+            hitLock = true
+        }
     //block collision
     for (let i = 0; i < blocks.length; i++){
         if(ballCurrentPosition[0] > blocks[i].bottomLeft[0] &&
@@ -221,10 +314,29 @@ function checkForCollision() {
                 score++
                 scoreDisplay.innerHTML = score
                 if (blocks.length == 0) {
-                    gameStarted = false
-                    scoreDisplay.innerHTML = ('Final score: ' + score)
+                    document.removeEventListener('keydown', moveUser)
+                    scoreDisplay.innerHTML = 'You win! Final score: ' + score.toString()
+                    clearInterval(timerId)
                 }
+            //ballCurrentPosition[1] + ballHeight < blocks[i].bottomLeft[1]
+            //Math.abs(ballCurrentPosition[1] + ballHeight - blocks[i].bottomLeft[1]) < Math.abs(ballCurrentPosition[1] + ballHeight - blocks[i].topLeft[1])
+            if (ballCurrentPosition[1] + ballHeight <= (blocks[i].bottomLeft[1] + 1)){
+                yDirection = yDirection * -1
             }
+            if (ballCurrentPosition[1] >= (blocks[i].topLeft[1] - 1)){
+                yDirection = yDirection * -1
+            }
+            if (ballCurrentPosition[0] <= (blocks[i].bottomLeft[0] + 1) &&
+            ballCurrentPosition[1] + ballHeight >= (blocks[i].bottomLeft[1]) &&
+            ballCurrentPosition[1] <= (blocks[i].topLeft[1])){
+                xDirection = xDirection * -1
+            }
+            if (ballCurrentPosition[0] >= (blocks[i].bottomRight[0] - 1)&&
+            ballCurrentPosition[1] + ballHeight >= (blocks[i].bottomLeft[1]) &&
+            ballCurrentPosition[1] <= (blocks[i].topLeft[1])){
+                xDirection = xDirection * -1
+            }
+        }
     }
 }
 
